@@ -4,6 +4,16 @@
             <h2>Loading ....</h2>
         </div>
         <div v-else class="py-6">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+                <div class="container-fluid">
+                    <router-link
+                        :to="{ name: 'AddArticle' }"
+                        class="btn btnoutline-light"
+                    >
+                        New Article
+                    </router-link>
+                </div>
+            </nav>
             <table class="table table-striped shadow">
                 <thead>
                     <tr>
@@ -64,6 +74,17 @@ const getarticles = async () => {
             console.log(error);
         });
 };
+const deletearticle = async (id) => {
+    if (window.confirm("Etes-vous sûr de vouloir supprimer ?")) {
+        try {
+            await axios.delete(`http://localhost:8000/api/articles/${id}`);
+            getarticles();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+};
+
 onMounted(() => {
     getarticles();
 });

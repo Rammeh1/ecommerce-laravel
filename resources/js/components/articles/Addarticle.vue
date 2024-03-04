@@ -4,67 +4,54 @@
         <form @submit.prevent="addArticle">
             <div class="row">
                 <div class="col-md-6">
-                    .
                     <label for="reference" class="form-label">Référence</label>
                     <input
                         type="text"
                         class="form-control"
                         id="reference"
-                        vmodel="article.reference"
+                        v-model="article.reference"
                     />
                 </div>
                 <div class="col-md-6 ms-auto">
-                    <label for="designation" class="formlabel"
+                    <label for="designation" class="form-label"
                         >Désignation</label
                     >
-
                     <input
-                        type="texte"
+                        type="text"
                         class="form-control"
                         id="designation"
-                        vmodel="article.designation"
+                        v-model="article.designation"
                     />
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    .
                     <label for="marque" class="form-label">Marque</label>
                     <input
                         type="text"
                         class="form-control"
                         id="marque"
-                        vmodel="article.marque"
+                        v-model="article.marque"
                     />
                 </div>
                 <div class="col-md-6 ms-auto">
                     <label for="Quantité" class="form-label">Qtock</label>
                     <input
-                        type="texte"
+                        type="text"
                         class="form-control"
                         id="qtestock"
-                        vmodel="article.qtestock"
+                        v-model="article.qtestock"
                     />
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    .
                     <label for="prix" class="form-label">Prix</label>
                     <input
                         type="text"
                         class="form-control"
                         id="prix"
-                        vmodel="article.prix"
-                    />
-                </div>
-                <div class="col-md-6 ms-auto">
-                    <label for="categorie" class="form-label">Catégorie</label>
-                    <input
-                        type="texte"
-                        class="form-control"
-                        id="categorieID"
-                        vmodel="article.scategorieID"
+                        v-model="article.prix"
                     />
                 </div>
                 <div class="col-md-6 ms-auto">
@@ -80,12 +67,6 @@
                             {{ sc.nomscategorie }}
                         </option>
                     </select>
-                    <input
-                        type="texte"
-                        class="form-control"
-                        id="categorieID"
-                        vmodel="article.scategorieID"
-                    />
                 </div>
             </div>
             <div class="row">
@@ -96,7 +77,7 @@
                         type="text"
                         class="form-control"
                         id="imageart"
-                        vmodel="article.imageart"
+                        v-model="article.imageart"
                     />
                 </div>
             </div>
@@ -124,12 +105,6 @@ const article = ref({
     imageart: "",
     scategorieID: "",
 });
-const addArticle = async () => {
-    await axios
-        .post("http://localhost:8000/api/articles/", article.value)
-        .then(() => router.push({ name: "Viewarticles" }))
-        .catch((err) => console.log(err));
-};
 const Scategories = ref([]);
 const getscategories = () => {
     axios
@@ -140,6 +115,12 @@ const getscategories = () => {
         .catch((error) => {
             console.log(error);
         });
+};
+const addArticle = async () => {
+    await axios
+        .post("http://localhost:8000/api/articles/", article.value)
+        .then(() => router.push({ name: "ViewArticles" }))
+        .catch((err) => console.log(err));
 };
 onMounted(() => {
     getscategories();
