@@ -1,7 +1,7 @@
 <template>
     <div class="col-md-6 offset-md-3 border rounded p-4 mt-2 shadow">
-        <h4 align="center">Ajout Article</h4>
-        <form @submit.prevent="addArticle">
+        <h4 align="center">Modifier Article</h4>
+        <form @submit.prevent="modifierproduit">
             <div class="row">
                 <div class="col-md-6">
                     <label for="reference" class="form-label">Référence</label>
@@ -17,7 +17,7 @@
                         >Désignation</label
                     >
                     <input
-                        type="text"
+                        type="texte"
                         class="form-control"
                         id="designation"
                         v-model="article.designation"
@@ -37,7 +37,7 @@
                 <div class="col-md-6 ms-auto">
                     <label for="Quantité" class="form-label">Qtock</label>
                     <input
-                        type="text"
+                        type="texte"
                         class="form-control"
                         id="qtestock"
                         v-model="article.qtestock"
@@ -70,19 +70,17 @@
                 </div>
             </div>
             <div class="row">
-                <div class="row">
-                    <file-pond
-                        name="test"
-                        ref="pond"
-                        class-name="my-pond"
-                        label-idle="Drop files here..."
-                        allow-multiple="false"
-                        accepted-file-types="image/jpeg, image/png"
-                        v-bind:files="myFiles"
-                        v-on:init="handleFilePondInit"
-                        :server="serverOptions()"
-                    />
-                </div>
+                <file-pond
+                    name="test"
+                    ref="pond"
+                    class-name="my-pond"
+                    label-idle="Drop files here..."
+                    allow-multiple="false"
+                    accepted-file-types="image/jpeg, image/png"
+                    v-bind:files="myFiles"
+                    v-on:init="handleFilePondInit"
+                    :server="serverOptions()"
+                />
             </div>
             <br />
             <button type="submit" className="btn btn-outline-primary">
@@ -96,7 +94,7 @@
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import vueFilePond from "vue-filepond";
 import "filepond/dist/filepond.min.css";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
@@ -105,17 +103,21 @@ import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css
 const FilePond = vueFilePond(FilePondPluginImagePreview);
 const myFiles = ref([]);
 const router = useRouter();
+const route = useRoute();
 import axios from "axios";
-const article = ref({
-    reference: "",
-    designation: "",
-    marque: "",
-    qtestock: 0,
-    prix: 0,
-    imageart: "",
-    scategorieID: "",
-});
 const Scategories = ref([]);
+const article = ref({});
+const fetchArticle = async () => {
+    await axios
+        .get(`http://localhost:8000/api/articles/${route.params.id}`)
+        .then((res) => {
+            article.value = res.data;
+        })
+        .catch((error) => {
+            console.error("Error fetching article:", error);
+        });
+};
+
 const getscategories = () => {
     axios
         .get("http://localhost:8000/api/scategories")
@@ -126,14 +128,22 @@ const getscategories = () => {
             console.log(error);
         });
 };
-const addArticle = async () => {
-    await axios
-        .post("http://localhost:8000/api/articles/", article.value)
-        .then(() => router.push({ name: "ViewArticles" }))
-        .catch((err) => console.log(err));
+const modifierproduit = () => {
+    axios
+        .put(
+            `http://localhost:8000/api/articles/${route.params.id}`,
+            article.value
+        )
+        .then(() => {
+            router.push("/listart");
+        })
+        .catch((error) => {
+            console.error("There was an error!", error);
+        });
 };
 onMounted(() => {
     getscategories();
+    fetchArticle();
 });
 const handleFilePondInit = async () => {
     if (article.value.imageart) {
